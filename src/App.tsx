@@ -7,7 +7,8 @@ import LoginPage from "../components/Login/LoginPage";
 import RelatoriosPage from "../components/Relatorios/RelatoriosPage";
 import { indicators } from "./data/indicators";
 import { enriquecerIndicadores, pacientesDoIndicador } from "./data/indicatorUtils";
-import type { Indicator, Paciente } from "../types";
+import type { Indicator, Paciente, UBS } from "../types";
+import { ubsMock } from "./data/ubs";
 
 const STORAGE_KEY = "brasil360_pacientes";
 
@@ -32,6 +33,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "indicadores" | "relatorios">("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pacientes, setPacientes] = useState<Paciente[]>(carregarPacientes);
+  const [selectedUBS, setSelectedUBS] = useState<UBS>(ubsMock[0]);
 
   // Persist patients to localStorage whenever they change
   useEffect(() => {
@@ -39,9 +41,14 @@ export default function App() {
   }, [pacientes]);
 
   // Enrich indicators with real patient data
+  const pacientesDaUBS = useMemo(
+  () => pacientes.filter((p) => p.ubsId === selectedUBS.id),
+  [pacientes, selectedUBS]
+  );
+
   const indicadoresEnriquecidos = useMemo(
-    () => enriquecerIndicadores(indicators, pacientes),
-    [pacientes]
+    () => enriquecerIndicadores(indicators, pacientesDaUBS),
+    [pacientesDaUBS]
   );
 
   function handleLogout() {
@@ -80,7 +87,8 @@ export default function App() {
     if (activeTab === "relatorios") {
       return (
         <RelatoriosPage
-          pacientes={pacientes}
+          pacientes={pacientesDaUBS}
+          ubsAtual={selectedUBS}
           onSalvar={salvarPaciente}
           onExcluir={excluirPaciente}
         />
@@ -117,12 +125,24 @@ export default function App() {
         onToggle={() => setSidebarOpen(!sidebarOpen)}
         onLogout={handleLogout}
         userName={user.name}
+        ubsNome={selectedUBS.nome}
+        ubsIne={selectedUBS.ine}
       />
       <div className={`main-content ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <Header
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
           user={user}
+
+          ubsAtual={selectedUBS}
+          todasUBS={ubsMock}
+          onTrocarUBS={(id) => {
+            const encontrada = ubsMock.find((u) => u.id === id);
+            if (encontrada) {
+              setSelectedUBS(encontrada);
+              setSelectedIndicator(null);
+            }
+          }}
         />
         <div className={`page-body ${paginaRelatorios ? "page-body--flush" : ""}`}>
           {renderConteudo()}

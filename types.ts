@@ -5,15 +5,25 @@ export interface Pergunta {
   texto: string;
 }
 
+export interface UBS {
+  id: string;
+  nome: string;
+  cidade: string;
+  estado: string;
+  ine: string;
+}
+
 export interface Paciente {
   id: string;
   cpf: string;
   nome: string;
   indicadorId: string;
+  ubsId: string;
   respostas: Record<string, boolean>;
   dataCadastro: string;
 }
- 
+
+
 export interface MonthData {
   mes: string;
   valor: number;

@@ -6,18 +6,24 @@ import {
   conceito,
   formatarCpf,
 } from "../../src/data/patientQuestions";
-import type { Paciente } from "../../types";
+import type { Paciente, UBS } from "../../types";
 import "./Relatorios.css";
 
 interface RelatoriosPageProps {
   pacientes: Paciente[];
+  ubsAtual: UBS;
   onSalvar: (p: Paciente) => void;
   onExcluir: (id: string) => void;
 }
 
 type Painel = { tipo: "novo" } | { tipo: "detalhe"; paciente: Paciente } | null;
 
-export default function RelatoriosPage({ pacientes, onSalvar, onExcluir }: RelatoriosPageProps) {
+export default function RelatoriosPage({ pacientes,
+  ubsAtual,
+  onSalvar,
+  onExcluir,
+}: RelatoriosPageProps)
+{
   const [painel, setPainel] = useState<Painel>(null);
   const [cpf, setCpf] = useState("");
   const [nome, setNome] = useState("");
@@ -66,6 +72,7 @@ export default function RelatoriosPage({ pacientes, onSalvar, onExcluir }: Relat
       cpf: cpf,
       nome: nome.trim(),
       indicadorId,
+      ubsId: ubsAtual.id,
       respostas,
       dataCadastro: painel?.tipo === "detalhe" ? painel.paciente.dataCadastro : new Date().toISOString(),
     });

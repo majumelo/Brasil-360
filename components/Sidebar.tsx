@@ -5,6 +5,8 @@ interface SidebarProps {
   onToggle: () => void;
   onLogout: () => void;
   userName: string;
+  ubsNome: string;
+  ubsIne: string;
 }
 
 const navItems = [
@@ -13,7 +15,7 @@ const navItems = [
   { id: "relatorios", label: "Relatórios", icon: "≡" },
 ];
 
-export default function Sidebar({ open, activeTab, onTabChange, onLogout, userName }: SidebarProps) {
+export default function Sidebar({ open, activeTab, onTabChange, onLogout, userName, ubsNome, ubsIne }: SidebarProps) {
   return (
     <aside className={`sidebar ${open ? "open" : "closed"}`}>
       <div className="sidebar-logo">
@@ -50,8 +52,8 @@ export default function Sidebar({ open, activeTab, onTabChange, onLogout, userNa
             <div className="equipe-badge">
               <span className="badge-icon">🏥</span>
               <div>
-                <div className="badge-name">ESF — Unidade Central</div>
-                <div className="badge-ine">INE: 0001234567</div>
+                <div className="badge-name">{ubsNome}</div>
+                <div className="badge-ine">INE: {ubsIne}</div>
               </div>
             </div>
             <div className="sidebar-version">v1.0 · Brasil 360</div>
